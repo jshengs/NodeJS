@@ -22,10 +22,9 @@ app5.get('/contact', function(req, res) {
     res.write(html)
 });
 
-
 // app5.get('/profile/:id', function(req, res){
 //     res.send('You requested to see a profile with the id of ' + req.params.id);
-// });
+// });adasdasd
 
 // app5.get('/profile/:name', function(req, res){
 //     res.send('You requested to see a profile with the name of ' + req.params.name);

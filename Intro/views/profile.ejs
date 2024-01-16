@@ -1,0 +1,34 @@
+<link href="../assets/style.css" rel="stylesheet" type="text/css">
+<br><br>
+
+<h1 style="color: rgb(13, 19, 19); text-align: center; font-style: italic;">Testing 1 2 3</h2>
+   
+    <h2> Hobbies: </h2>
+
+<br>
+
+<body>
+    <%- include ('partials/nav.ejs') %>
+
+<h1 style="color: blue; text-align: center;">Welcome to the profile of <%= person %></h1>
+
+    <p style="text-align: center;">
+        <strong>Age: </strong> <%=data.age %>
+    </p>
+
+    <p style="text-align: center;">
+        <strong>Job: </strong> <%=data.job %>
+    </p>
+
+    <h2 style="text-align: center;">
+        Hobbies:
+    </h2>
+
+    <ul style="list-style-type: none;">
+        <% data.hobbies.forEach(function(item){ %>
+            <li style="text-align: center;">
+                <%= item %>
+            </li>
+                <% }); %>
+    </ul>
+</body>

@@ -18,13 +18,6 @@ app5.set('view engine', 'ejs');
 // app5.use('/assets', express.static('assets'));
     
 
- app5.use('/', function(req, res){
-        // console.log(req.url);
-        
-        res.render("home", {qs: req.query});
-
-
-    });
 
 
 app5.get('/', function(req, res){
@@ -32,8 +25,13 @@ app5.get('/', function(req, res){
 
 });
 
+// app5.get('/contact', function(req, res) {
+//     let html = fs.readFileSync("./contact.html");
+//     res.write(html)
+// });
+
 app5.get('/contact', function(req, res) {
-    let html = fs.readFileSync("./contact.html");
+    res.render('contact', {qs: req, res});
     res.write(html)
 });
 

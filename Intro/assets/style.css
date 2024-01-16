@@ -1,4 +1,11 @@
-h2 {
+h2{
     color: greenyellow;
 }
 
+h3 {
+    color: rgba(149, 139, 165, 0.788);
+}
+
+body {
+    background-color: rgb(219, 214, 182);
+}

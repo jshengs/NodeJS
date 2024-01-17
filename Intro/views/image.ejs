@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Export Canvas to PNG</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <!-- Canvas size -->
+  <canvas id="canvas" width="800" height="500"></canvas>
+  <script src="../app5.js"></script>
+  <button onclick="downloadCanvas()">Download Canvas as PNG</button>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    //insert image in the canvas
+    // const image = new Image();
+    // image.src = "../uploads/nature.png";
+
+    var personName = "John";
+
+    const images = [
+      { src: "../uploads/nature.png", x: 0, y: 0, width: 800, height: 500 },
+      { src: "../uploads/air.png", x: 590, y: 10, width: 200, height: 150 },
+      { src: "../uploads/cloud.png", x: 0, y: 10, width: 150, height: 150 },
+      { src: "../uploads/cloud.png", x: 130, y: 10, width: 150, height: 150 },
+      { src: "../uploads/sun.png", x: 250, y: 10, width: 200, height: 150 },
+      { src: "../uploads/cloud.png", x: 400, y: 10, width: 200, height: 150 }
+
+      // Add more image objects as needed
+    ];
+
+
+    // Draw something on the canvas (you can add images, text, etc.)
+    // ctx.fillStyle = "blue";
+    // ctx.fillRect(100, 200, 800, 400);
+
+    // Draw text on the canvas
+
+    function loadImages(images, callback) {
+      let loadedImages = 0;
+
+      images.forEach(imageObj => {
+        const img = new Image();
+        img.onload = function() {
+          loadedImages++;
+          if (loadedImages === images.length) {
+            callback();
+          }
+        };
+        img.src = imageObj.src;
+        imageObj.img = img; // Store the Image object in the image object itself
+      });
+    }
+
+    function drawImages() {
+      images.forEach(imageObj => {
+        ctx.drawImage(imageObj.img, imageObj.x, imageObj.y, imageObj.width, imageObj.height);
+      });
+
+      // Optionally, draw additional content on the canvas
+      ctx.fillStyle = "beige";
+      ctx.fillRect(120, 230, 550, 100);
+      ctx.font = "30px Arial";
+        ctx.fillStyle = "black";
+        ctx.fillText(`Welcome back to <%= person %>'s Canvas`, 150, 295);
+
+       // Draw a circle
+        ctx.beginPath();
+        ctx.arc(350, 85, 20, 2, 10);
+        ctx.fillStyle = "transparent";
+        ctx.strokeStyle = "black";
+        ctx.fill();
+        ctx.stroke();
+    }
+
+    loadImages(images, drawImages);
+
+
+    function downloadCanvas() {
+      // Use html2canvas to capture the entire content of the canvas
+      html2canvas(document.body).then(canvas => {
+        // Convert the canvas content to a data URL
+        const dataURL = canvas.toDataURL("image/png");
+
+        // Create a temporary link element
+        const downloadLink = document.createElement("a");
+
+        // Set link properties
+        downloadLink.href = dataURL;
+        downloadLink.download = "entire_canvas.png";
+
+        // Append the link to the document
+        document.body.appendChild(downloadLink);
+
+        // Trigger a click on the link to start the download
+        downloadLink.click();
+
+        // Remove the link from the document
+        document.body.removeChild(downloadLink);
+      });
+    }
+  </script>
+</body>
+</html>

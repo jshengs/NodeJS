@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Export Canvas to PNG</title>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+</head>
+<body>
+    <!-- Canvas Size -->
+  <canvas id="canvas" width="400" height="500"></canvas>
+
+  <button onclick="downloadCanvas()">Download Canvas</button>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    
+    // Draw something on the canvas (you can add images, text, etc.)
+    ctx.fillStyle = "blue";
+    ctx.fillRect(50, 50, 700, 400);
+
+    // Draw text on the canvas
+    ctx.font = "30px Arial";
+    ctx.fillStyle = "black";
+    ctx.fillText("Hello, Canvas!", 400, 400);
+
+
+     // Add an image to the canvas
+     const image = new Image();
+    image.onload = function() {
+      // Draw the image at the specified position (x, y)
+      ctx.drawImage(image, 100, 100, 200, 150); // Adjust the position and size as needed
+    };
+    image.src = "../uploads/nature.png"; // Replace with the actual path to your image
+ 
+
+
+
+
+
+    
+    function downloadCanvas() {
+      // Use html2canvas to capture the entire content of the canvas
+      html2canvas(document.body).then(canvas => {
+        // Convert the canvas content to a data URL
+        const dataURL = canvas.toDataURL("image/png");
+
+        // Create a temporary link element
+        const downloadLink = document.createElement("a");
+
+        // Set link properties
+        downloadLink.href = dataURL;
+        downloadLink.download = "entire_canvas.png";
+
+        // Append the link to the document
+        document.body.appendChild(downloadLink);
+
+        // Trigger a click on the link to start the download
+        downloadLink.click();
+
+        // Remove the link from the document
+        document.body.removeChild(downloadLink);
+      });
+    }
+    
+  </script>
+</body>
+</html>

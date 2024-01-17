@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
+    </head>
+
+    <body style="width: fit-content;">
+        <canvas id="canvas" width="717px" height="1080px"></canvas>
+
+        <script>
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+
+            const images = [
+                { src: "../uploads/cloud.png", x: 0, y: 0, width: 677, height: 1067 },
+                { src: "../uploads/cloud.png", x: 50, y: 90, width: 572, height: 851 },
+                { src: "../uploads/logo.png", x: 240, y: 120, width: 170, height: 50 },
+                { src: "../uploads/tag.png", x: 60, y: 400, width: 530, height: 400 }
+
+                ];
+                function loadImages(images, callback) {
+      let loadedImages = 0;
+
+      images.forEach(imageObj => {
+        const img = new Image();
+        img.onload = function() {
+          loadedImages++;
+          if (loadedImages === images.length) {
+            callback();
+          }
+        };
+        img.src = imageObj.src;
+        imageObj.img = img;
+      });
+    }
+
+    function drawImages() {
+      images.forEach(imageObj => {
+        ctx.drawImage(imageObj.img, imageObj.x, imageObj.y, imageObj.width, imageObj.height);
+      });
+
+      
+      // Optionally, draw additional content on the canvas
+        // ctx.fillStyle = "transparent";
+        // ctx.fillRect(120, 230, 550, 100);
+        ctx.font = "bold 120px helvetica";
+        ctx.fillStyle = "white";
+
+        ctx.fillText('JOHN', 110, 300);
+        ctx.font = "bold 90px helvetica";
+
+        ctx.fillText('YOU', 100, 395);
+        ctx.fillText('ARE A', 100, 480);
+
+    }
+
+    loadImages(images, drawImages);
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Chat</title>
+</head>
+<body>
+  <div id="chat">
+    <ul id="messages"></ul>
+    <input type="text" id="nickname" placeholder="Your nickname">
+    <input type="text" id="messageInput" placeholder="Type a message">
+    <button onclick="sendMessage()">Send Message</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script>
+const socket = io('http://localhost:3031');
+
+    socket.on('text-chat', (message) => {
+      const messagesList = document.getElementById('messages');
+      const li = document.createElement('li');
+      li.textContent = `${message.nickname}: ${message.message} (${message.time})`;
+      messagesList.appendChild(li);
+    });
+
+    function sendMessage() {
+      const nickname = document.getElementById('nickname').value;
+      const message = document.getElementById('messageInput').value;
+
+      socket.emit('text-chat', { nickname, message });
+    }
+  </script>
+</body>
+</html>

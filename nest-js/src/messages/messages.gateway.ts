@@ -11,6 +11,7 @@ import { WebSocketExceptionFilter } from 'src/socket/ws-exception.filter';
     origin: '*',
   },
 })
+
 class ChatMessage {
   @IsNotEmpty()
   @IsString()

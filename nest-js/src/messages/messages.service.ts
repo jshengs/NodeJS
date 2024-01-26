@@ -17,9 +17,6 @@ export class MessagesService {
     return this.clientToUser[clientId]
   }
 
-
-
-
   create(createMessageDto: CreateMessageDto) {
     const message = {...createMessageDto};
     return this.message.push(message);

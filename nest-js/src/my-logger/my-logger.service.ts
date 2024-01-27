@@ -12,10 +12,10 @@ export class MyLoggerService extends ConsoleLogger{
             timeZone: 'America/Chicago',
         }).format(new Date())}\t${entry}\n`
 
-        try{
-            if(!fs.existsSync(path.join(__dirname,'..', '..', 'logs'
-            await fsPromises.mkdir(path.join))))
-        }
+        // try{
+        //     if(!fs.existsSync(path.join(__dirname,'..', '..', 'logs'
+        //     await fsPromises.mkdir(path.join))))
+        // }
     }
     log(message: any, context?: string){
         const entry = `${context}\t${message}`

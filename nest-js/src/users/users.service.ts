@@ -85,5 +85,4 @@ export class UsersService {
             
             return removedUser
         }
-
 }

@@ -3,6 +3,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateMessageDto } from 'src/messages/dto/update-message.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { NotFoundException } from '@nestjs/common';
+import * as admin from 'firebase-admin';
+
+const path = require('path');
+const serviceAccount = require (path.join(process.cwd(),'nodejs1-7a602-firebase-adminsdk-td09f-fad664aec3.json'));
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+
+});
 
 @Injectable()
 export class UsersService {
@@ -38,6 +47,8 @@ export class UsersService {
             "role": "ENGINEER"
           }
         ]
+
+        private firestore = admin.firestore();
 
         findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN'){
             if(role){
@@ -84,5 +95,14 @@ export class UsersService {
             this.users = this.users.filter(user => user.id !== id)
             
             return removedUser
+        }
+
+        async addToFirebase(createUserDto: CreateUserDto): Promise <void>{
+            const newUser = {
+                id: this.users.length + 1,
+                ...createUserDto,
+            };
+
+            await this.firestore.collection('users').add(newUser);
         }
 }

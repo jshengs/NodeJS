@@ -3,6 +3,7 @@ import {UsersService} from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Throttle, SkipThrottle } from '@nestjs/throttler';
+import { createUnzip } from 'zlib';
 
 @SkipThrottle()
 @Controller('users')
@@ -25,13 +26,20 @@ export class UsersController {
         return this.usersService.findOne(+id) //Unary plus + THIS CONVERT IT INTO A NUMBER
 
     }
+    
 
-    @Post() //POST /users
-    // create(@Body() user: { name: string, email: string, role: 'INTERN' | 'ENGINEER' | 'ADMIN'}){
-        create(@Body(ValidationPipe) createUserDto: CreateUserDto){
+    // @Post() //POST /users
+    // // create(@Body() user: { name: string, email: string, role: 'INTERN' | 'ENGINEER' | 'ADMIN'}){
+    //     create(@Body(ValidationPipe) createUserDto: CreateUserDto){
 
-        return this.usersService.create(createUserDto)
+    //     return this.usersService.create(createUserDto)
 
+    // }
+
+    async create(@Body() CreateUserDto: CreateUserDto): Promise<any>{
+        const newUser = await this.usersService.create(CreateUserDto);
+
+        return newUser;
     }
 
     @Patch(':id') //PATCH /users/:id
@@ -44,4 +52,6 @@ export class UsersController {
     delete(@Param('id', ParseIntPipe) id: number){
         return this.usersService.delete(id)
     }
+
+    
 }

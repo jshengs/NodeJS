@@ -1,17 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { getStorage } from 'firebase-admin/storage';
-import { createImage } from './utils'; 
+import { Storage } from '@google-cloud/storage';
 import * as admin from 'firebase-admin';
+import * as path from 'path';
+import { WebsocketGateway } from './websocket.gateway';
+import { createImage } from './utils';
 
-
-const path = require('path');
-const serviceAccount = require (path.join(process.cwd(),'nodejs1-7a602-firebase-adminsdk-td09f-fad664aec3.json'));
+const serviceAccount = require(path.join(process.cwd(), 'nodejs1-7a602-firebase-adminsdk-td09f-fad664aec3.json'));
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: 'testerdemo-888a3.appspot.com',
-
+  credential: admin.credential.cert(serviceAccount),
+  // storageBucket: 'testerdemo-888a3.appspot.com',
+  storageBucket: 'nodejs1-7a602.appspot.com',
 });
+
+
+// const bucketName = 'nodejs1-7a602.appspot.com';
+
+// const storage = new Storage({
+//   projectId: 'nodejs1-7a602',
+//   keyFilename: 'nodejs1-7a602-firebase-adminsdk-td09f-fad664aec3.json',
+// });
+
 
 @Injectable()
 export class AppService {
@@ -40,24 +49,28 @@ export class AppService {
     });
   }
 
-  async createImage(url: string) {
-    const imageBuffer = await createImage(url);
+  async createImage(url: string, colorTone: string) {
+    const imageBuffer = await createImage(url, colorTone);
     return imageBuffer;
   }
 
-  async saveImageAndGetPublicUrl(imageBuffer: Buffer): Promise<string> {
-    const bucket = getStorage().bucket();
-    const file = bucket.file('ck/' + Date.now() + '.png');
+  async saveImageAndGetPublicUrl(imageBuffer: Buffer) {
+    const bucket = admin.storage().bucket();
+    const file = bucket.file(Date.now() + '.png');
     const options = {
       metadata: {
         contentType: 'image/png',
       },
+      
     };
 
     return new Promise<string>((resolve, reject) => {
       file.save(imageBuffer, options, (err) => {
         if (err) {
-          reject('not ok');
+          // reject('NoT ok');
+          // return;
+          reject('Failed to save image to Firebase Storage');
+          console.error('Error saving image to Firebase Storage:', err);
           return;
         }
 
@@ -69,7 +82,9 @@ export class AppService {
             resolve(urls[0]);
           })
           .catch((error) => {
-            reject('not ok');
+            // reject('NOT ok');
+            reject('Failed to get signed URL');
+            console.error('Error getting signed URL:', error);
           });
       });
     });
@@ -78,6 +93,4 @@ export class AppService {
   getCount(): number {
     return this.connectedClients.length;
   }
-
-  
 }

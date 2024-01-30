@@ -1,10 +1,10 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("../nodejs1-7a602-firebase-adminsdk-td09f-fad664aec3.json");
+const serviceAccount = require("../serviceAccountKey.json");
 const WebSocket = require("ws");
-
 const express = require("express");
-const { getStorage } = require("firebase-admin/storage");
 const { createImage } = require("./utils");
+const { getStorage } = require("firebase-admin/storage");
+
 const cors = require("cors");
 
 // websocket
@@ -22,8 +22,10 @@ const httpServer = app.listen(port, () => {
 httpServer.on("upgrade", (req, socket, head) => {
   wss.handleUpgrade(req, socket, head, (ws) => {
     wss.emit("connection", ws, req);
+    console.log("Done")
   });
 });
+
 
 let connectedClients = [];
 // Set up a connection listener
@@ -45,14 +47,63 @@ wss.on("connection", (ws) => {
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "testerdemo-888a3.appspot.com",
+  storageBucket: "nodejs1-7a602.appspot.com",
 });
 
-// connect to websocket
 
+
+// // Function to save an image to Firebase Storage
+// async function saveImageToStorage(base64Image, fileName) {
+//   try {
+//     // Reference to the default bucket
+//     const bucket = admin.storage().bucket();
+
+//     // Convert base64 string to buffer
+//     const imageBuffer = Buffer.from(base64Image, "base64");
+
+//     // Specify the file name in Firebase Storage
+//     const file = bucket.file(fileName);
+
+//     // Create a write stream to upload the image buffer
+//     const stream = file.createWriteStream({
+//       metadata: {
+//         contentType: "image/jpeg", // Adjust the content type based on your image type
+//       },
+//     });
+
+//     // Handle stream events (finish, error)
+//     stream.on("finish", () => {
+//       console.log(`Image ${fileName} uploaded to Firebase Storage.`);
+//     });
+
+//     stream.on("error", (err) => {
+//       console.error(`Error uploading image ${fileName}:`, err);
+//     });
+
+//     // Write the image buffer to the stream
+//     stream.end(imageBuffer);
+
+//     return `gs://${bucket.name}/${fileName}`;
+//   } catch (error) {
+//     console.error("Error saving image to Firebase Storage:", error);
+//     throw error;
+//   }
+// }
+
+// // Example usage:
+// const base64Image = "YOUR_BASE64_ENCODED_IMAGE_STRING";
+// const fileName = "masking.png";
+
+// saveImageToStorage(base64Image, fileName);
+
+
+
+
+
+// connect to websocket
 let sequance = 0;
 
-export function addTask(task, email) {
+function addTask(task, email) {
   // Distribute tasks if there are connected clients
   sequance += 1;
   let ramain = sequance % connectedClients.length;
@@ -82,26 +133,25 @@ app.get("/test", (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-  const { url, email } = req.query;
-  if (url === undefined || email === undefined) {
+  const { url, colorTone } = req.query;
+  if (url === undefined) {
     res.send({
       status: "error",
       message: "url is required",
     });
   }
 
-  if (connectedClients.length === 0) {
-    res.send({
-      status: "error",
-      message: "no client connected",
-    });
-  }
+  // if (connectedClients.length === 0) {
+  //   res.send({
+  //     status: "error",
+  //     message: "no client connected",
+  //   });
+  // }
+  // addTask(url[0], email);
 
-  const _urll =
-    url ??
-    "https://firebasestorage.googleapis.com/v0/b/testerdemo-888a3.appspot.com/o/cktest-sg%2Fd7cc432c1fa7470d8a818c74466ce548.png?alt=media&token=6dd322ea-19e0-4583-855c-d31223aff413";
+  const _urll = url;
 
-  const imageBuffer = await createImage(_urll);
+  const imageBuffer = await createImage(_urll, colorTone);
 
   const bucket = getStorage().bucket();
 
@@ -131,8 +181,6 @@ app.get("/", async (req, res) => {
             url: url[0],
           })
         );
-
-        addTask(url[0], email);
       });
   });
 });

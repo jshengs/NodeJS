@@ -1,3 +1,5 @@
+// http://localhost:7000/removebg?image=https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmpzMBv4i3ODy7leCs0-jtpHrOBCXJqmB8cQ&usqp=CAU
+
 const express = require('express');
 const { spawn } = require('child_process');
 const path = require('path');
@@ -5,28 +7,22 @@ const axios = require('axios');
 const fs = require('fs').promises;
 const app = express();
 
-// Set up static file serving from the 'first' directory
 app.use(express.static('first'));
 
 app.get('/removebg', async (req, res) => {
   try {
-    const imageURL = req.query.image; // Get the image link from the query parameters
+    const imageURL = req.query.image; 
 
-    // Download the image from the provided link
     const response = await axios.get(imageURL, { responseType: 'arraybuffer' });
     const inputBuffer = Buffer.from(response.data);
 
-    // Save the downloaded image temporarily
     const tempInputPath = path.join(__dirname, 'tempInput.png');
     await fs.writeFile(tempInputPath, inputBuffer);
 
-    // Define the output path
     const outputPath = path.join(__dirname, `output4_${Date.now()}.png`);
 
-    // Absolute path to the Python script
     const pythonScriptPath = path.join(__dirname, 'init_py.py');
 
-    // Spawn the Python process
     const pythonProcess = spawn('python', [pythonScriptPath, tempInputPath, outputPath]);
 
     pythonProcess.stdout.on('data', (data) => {
@@ -40,7 +36,6 @@ app.get('/removebg', async (req, res) => {
     pythonProcess.on('close', async (code) => {
       console.log(`child process exited with code ${code}`);
 
-      // Remove the temporary input file
       try {
         await fs.unlink(tempInputPath);
         console.log(`Deleted temporary input file: ${tempInputPath}`);
@@ -49,7 +44,6 @@ app.get('/removebg', async (req, res) => {
       }
 
       if (code === 0) {
-        // Send a response to the client
         res.send('Background removed successfully!');
       } else {
         res.status(500).send('Error processing image.');
